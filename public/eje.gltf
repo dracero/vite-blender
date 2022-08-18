@@ -1,0 +1,270 @@
+{
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v3.2.43",
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [
+        0,
+        1
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "Cube",
+      "scale": [
+        3.2252941131591797,
+        1.7186342477798462,
+        2.7477731704711914
+      ],
+      "translation": [
+        -5.227096080780029,
+        4.034263610839844,
+        3.3500306606292725
+      ]
+    },
+    {
+      "mesh": 1,
+      "name": "Cylinder.002",
+      "rotation": [
+        0.5013549327850342,
+        0.5016735792160034,
+        -0.49416059255599976,
+        0.5027646422386169
+      ],
+      "scale": [
+        0.9979578256607056,
+        0.4806936979293823,
+        0.9999664425849915
+      ],
+      "translation": [
+        -5.289337635040283,
+        7.796902179718018,
+        -5.984167098999023
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "channels": [
+        {
+          "sampler": 0,
+          "target": {
+            "node": 1,
+            "path": "translation"
+          }
+        },
+        {
+          "sampler": 1,
+          "target": {
+            "node": 1,
+            "path": "rotation"
+          }
+        }
+      ],
+      "name": "eje",
+      "samplers": [
+        {
+          "input": 8,
+          "interpolation": "LINEAR",
+          "output": 9
+        },
+        {
+          "input": 8,
+          "interpolation": "LINEAR",
+          "output": 10
+        }
+      ]
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Cube",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3
+        }
+      ]
+    },
+    {
+      "name": "Cylinder.004",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 4,
+            "NORMAL": 5,
+            "TEXCOORD_0": 6
+          },
+          "indices": 7
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 30,
+      "max": [
+        1.4677824974060059,
+        1.2664475440979004,
+        4.448981761932373
+      ],
+      "min": [
+        -1.4677824974060059,
+        -1.2664475440979004,
+        -4.448981761932373
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 30,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 30,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 48,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 576,
+      "max": [
+        1.9999525547027588,
+        5.0393266677856445,
+        1.9999525547027588
+      ],
+      "min": [
+        -1.9999525547027588,
+        -5.618171691894531,
+        -1.9999525547027588
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 5,
+      "componentType": 5126,
+      "count": 576,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 6,
+      "componentType": 5126,
+      "count": 576,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 7,
+      "componentType": 5123,
+      "count": 1116,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 8,
+      "componentType": 5126,
+      "count": 185,
+      "max": [
+        7.708333333333333
+      ],
+      "min": [
+        0.041666666666666664
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 9,
+      "componentType": 5126,
+      "count": 185,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 10,
+      "componentType": 5126,
+      "count": 185,
+      "type": "VEC4"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 360,
+      "byteOffset": 0
+    },
+    {
+      "buffer": 0,
+      "byteLength": 360,
+      "byteOffset": 360
+    },
+    {
+      "buffer": 0,
+      "byteLength": 240,
+      "byteOffset": 720
+    },
+    {
+      "buffer": 0,
+      "byteLength": 96,
+      "byteOffset": 960
+    },
+    {
+      "buffer": 0,
+      "byteLength": 6912,
+      "byteOffset": 1056
+    },
+    {
+      "buffer": 0,
+      "byteLength": 6912,
+      "byteOffset": 7968
+    },
+    {
+      "buffer": 0,
+      "byteLength": 4608,
+      "byteOffset": 14880
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2232,
+      "byteOffset": 19488
+    },
+    {
+      "buffer": 0,
+      "byteLength": 740,
+      "byteOffset": 21720
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2220,
+      "byteOffset": 22460
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2960,
+      "byteOffset": 24680
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "eje_data.bin",
+      "byteLength": 27640
+    }
+  ]
+}
