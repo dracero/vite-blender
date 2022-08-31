@@ -11,9 +11,10 @@ const GltfModel = ({ modelPath, scale = 1, position = [0, 0, 0], action }) => {
   useEffect(() => {
     console.log(actions);
     if (action){
+      actions.eje.paused=false
       actions.eje.play();
      } else  {
-      actions.eje.stop();
+      actions.eje.paused=true;
      }
   })
    // Subscribe this component to the render-loop, rotate the mesh every frame
