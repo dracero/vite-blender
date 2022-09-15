@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import GltfModel from "./gltf";
 
-const ModelViewer = ({ modelPath, scale = 1, position = [0, 0, 0]}) => {
+const ModelViewer = ({ modelPath, scale = 1, position = [1, 3, 1]}) => {
   const [action, setAction] = useState(false)
   const Noaction = () => {
     return <button onClick={()=>setAction(!action)}>
