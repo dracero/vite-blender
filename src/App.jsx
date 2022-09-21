@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import GltfModel from "./gltf";
 
-const ModelViewer = ({ modelPath, scale = 1, position = [10, -5, -5]}) => {
+const ModelViewer = ({ modelPath, scale = 3, position = [-1 , -2, -20]}) => {
   const [action, setAction] = useState(false)
   const Noaction = () => {
     return <button onClick={()=>setAction(!action)}>
@@ -22,8 +22,8 @@ const ModelViewer = ({ modelPath, scale = 1, position = [10, -5, -5]}) => {
      {action ? <Play /> : <Noaction />}
    <Canvas>
       <ambientLight intensity={0.3} />
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
-      <pointLight position={[-10, -10, -10]} />
+      <spotLight position={[10, 10, 10]} angle={0.6} penumbra={1} />
+      <pointLight position={[-1, -1, -1]} />
       <Suspense fallback={null}>
         <GltfModel modelPath={modelPath} scale={scale} position={position} action={action}/>
         <OrbitControls />

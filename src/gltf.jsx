@@ -3,7 +3,7 @@ import { useLoader, useFrame } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useAnimations, useGLTF } from "@react-three/drei";
 
-const GltfModel = ({ modelPath, scale = -8, position = [-1, 3, -1], action }) => {
+const GltfModel = ({ modelPath, scale = 1, position = [-1, 3, -1], action }) => {
   const group = useRef();
   const gltf = useLoader(GLTFLoader, modelPath);
   const {  animations } = useGLTF("/eje.glb");
