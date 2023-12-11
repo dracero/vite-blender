@@ -9,9 +9,10 @@ const ObjectsIndex = {
 export class PlaneObject extends THREE.Object3D {
   model: InclinedPlaneModel;
 
-  private static readonly depth = 10;
+  static readonly depth = 10;
+  static readonly wheelWidth = 7;
 
-  private wheel: THREE.Mesh;
+  private wheel: THREE.Object3D;
   private plane: THREE.Mesh;
   private animation: WheelAnimation;
 
@@ -22,7 +23,7 @@ export class PlaneObject extends THREE.Object3D {
     this.name = "plane-object";
 
     this.model = InclinedPlaneModel.fromDatGUI();
-    this.wheel = this.buildWheel();
+    this.buildWheel();
     this.add(this.wheel);
 
     const planeGeometry = new THREE.BufferGeometry();
@@ -58,7 +59,6 @@ export class PlaneObject extends THREE.Object3D {
     this.plane.geometry = new THREE.ExtrudeGeometry(shape, { depth, curveSegments: 3, bevelEnabled: false });
     this.plane.geometry.translate(0, 0, -depth);
 
-    this.wheel.geometry.dispose();
     this.wheel.removeFromParent();
     this.wheel = this.buildWheel();
     this.add(this.wheel);
@@ -67,12 +67,27 @@ export class PlaneObject extends THREE.Object3D {
     this.animation.play();
   }
 
-  private buildWheel(): THREE.Mesh {
+  private buildWheel(): THREE.Object3D {
     const { radius: r } = this.model.conditions;
+
+    const disposables = this.wheel?.userData.disposables;
+    if (disposables) disposables.forEach((disposable) => disposable.dispose());
+
+    this.wheel = new THREE.Group();
 
     const geometry = new THREE.CylinderGeometry(r, r, 0.2, 8);
     geometry.rotateX(Math.PI / 2);
     const material = new THREE.MeshPhongMaterial({ color: 0xdd4400 });
-    return new THREE.Mesh(geometry, material);
+    const left = new THREE.Mesh(geometry, material);
+    left.translateZ(-PlaneObject.wheelWidth / 2);
+    const right = new THREE.Mesh(geometry, material);
+    right.translateZ(PlaneObject.wheelWidth / 2);
+
+    this.wheel.add(left);
+    this.wheel.add(right);
+
+    this.wheel.userData.disposables = [geometry];
+
+    return this.wheel;
   }
 }

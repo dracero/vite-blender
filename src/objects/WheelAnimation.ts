@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { InclinedPlaneModel } from "../models/InclinedPlaneModel";
 import { addDatListener, guiOptions } from "../components/DatGUI";
 import { Clock } from "../utils/Clock";
+import { PlaneObject } from "./PlaneObject";
 
 export class WheelAnimation {
   private mixer: THREE.AnimationMixer;
@@ -16,7 +17,7 @@ export class WheelAnimation {
 
     for (let instant of instants) {
       const { position, rotation, time } = instant;
-      positions.push(position.x, position.y, 0);
+      positions.push(position.x, position.y, -PlaneObject.depth / 2);
       rotations.push(-rotation);
       times.push(time);
     }

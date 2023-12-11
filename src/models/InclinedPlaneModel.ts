@@ -60,12 +60,15 @@ export class InclinedPlaneModel {
   }
 
   solve(): InclinedPlaneInstant[] {
+    const { cos, sin } = Math;
     const { horizontalLength: l } = this;
     const { height: h, radius: r, inclination } = this.conditions;
 
+    const path = new THREE.Vector2(cos(-inclination), sin(-inclination)).multiplyScalar(l);
+
     return [
       { time: 0, position: this.initPosition, rotation: 0 },
-      { time: 3, position: new THREE.Vector2(l, r), rotation: h / Math.sin(inclination) / r },
+      { time: 3, position: this.initPosition.add(path), rotation: h / Math.sin(inclination) / r },
     ];
   }
 
