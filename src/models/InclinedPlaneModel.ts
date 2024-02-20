@@ -23,7 +23,7 @@ export class InclinedPlaneModel {
   constructor(conditions: InclinedPlaneConditions) {
     this.conditions = JSON.parse(JSON.stringify(conditions));
 
-    addDatListener("datgui-phi", (e) => {
+    addDatListener("datgui-angle", (e) => {
       this.conditions.inclination = e.value;
       this.dispatchUpdate();
     });
@@ -37,7 +37,7 @@ export class InclinedPlaneModel {
   static fromDatGUI(): InclinedPlaneModel {
     const conditions = {
       length: DEFAULT_LENGTH,
-      inclination: guiOptions.phi,
+      inclination: guiOptions.angle,
       radius: guiOptions.radius,
     };
 
@@ -50,9 +50,9 @@ export class InclinedPlaneModel {
 
   get initPosition(): THREE.Vector2 {
     const { cos, sin, PI } = Math;
-    const { radius: r, inclination: phi } = this.conditions;
+    const { radius: r, inclination: angle } = this.conditions;
 
-    return new THREE.Vector2(r * sin(phi), this.height + r * cos(phi));
+    return new THREE.Vector2(r * sin(angle), this.height + r * cos(angle));
   }
 
   solve(): InclinedPlaneInstant[] {

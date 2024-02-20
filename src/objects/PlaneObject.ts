@@ -60,10 +60,10 @@ export class PlaneObject extends THREE.Object3D {
 
   private updateModel() {
     const { tan } = Math;
-    const { inclination: phi } = this.model.conditions;
+    const { inclination: angle } = this.model.conditions;
     const h = this.model.height;
     const depth = PlaneObject.depth;
-    const margin = new THREE.Vector2(1, tan(phi)).multiplyScalar(2);
+    const margin = new THREE.Vector2(1, tan(angle)).multiplyScalar(2);
 
     const shape = new THREE.Shape();
     shape.moveTo(-margin.x, 0);
