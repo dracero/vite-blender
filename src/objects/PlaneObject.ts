@@ -3,6 +3,7 @@ import { InclinedPlaneModel } from "../models/InclinedPlaneModel";
 import { WheelAnimation } from "./WheelAnimation";
 import { RulerObject } from "./RulerObject";
 import { AngleRulerObject } from "./AngleRulerObject";
+import { addDatListener, guiOptions } from "../components/DatGUI";
 
 const ObjectsIndex = {
   wheel: "Cylinder001",
@@ -26,6 +27,7 @@ export class PlaneObject extends THREE.Object3D {
     super();
 
     this.name = "plane-object";
+    this.rulers.visible = guiOptions.showGuides;
     this.add(this.rulers);
 
     this.model = InclinedPlaneModel.fromDatGUI();
@@ -46,6 +48,8 @@ export class PlaneObject extends THREE.Object3D {
 
     this.animation = new WheelAnimation(this.wheel, this.model);
     this.animation.play();
+
+    addDatListener("datgui-guides", (e) => (this.rulers.visible = e.value));
   }
 
   update() {

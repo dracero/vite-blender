@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-type DatEventType = 'datgui-togglePlay' | 'datgui-speed' | 'datgui-2D' | 'datgui-angle' | 'datgui-radius'
+type DatEventType = 'datgui-togglePlay' | 'datgui-speed' | 'datgui-2D' | 'datgui-angle' | 'datgui-radius' | 'datgui-guides'
 
 class DatEvent extends Event {
   value: any;
@@ -15,6 +15,7 @@ export const guiOptions = {
   speed: 1,
   angle: 0.3,
   radius: 2,
+  showGuides: true,
   '2D': false 
 }
 
@@ -33,6 +34,7 @@ export const DatGUI = () => {
       gui.add(guiOptions, 'speed', 0, 2, 0.1).name("Velocidad").onChange(dispatcher('datgui-speed'))
       gui.add(guiOptions, 'angle', 0.1, 1).name('α').onChange(dispatcher('datgui-angle'))
       gui.add(guiOptions, 'radius', 0.5, 5).name('Radio').onChange(dispatcher('datgui-radius'))
+      gui.add(guiOptions, 'showGuides').name('Guías').onChange(dispatcher('datgui-guides'))
       gui.add(guiOptions, '2D').onChange(dispatcher('datgui-2D'))
     })
   })
