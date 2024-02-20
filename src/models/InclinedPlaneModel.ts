@@ -57,14 +57,34 @@ export class InclinedPlaneModel {
 
   solve(): InclinedPlaneInstant[] {
     const { cos, sin } = Math;
-    const { radius: r, length: l, inclination } = this.conditions;
+    const timestep = 0.01;
+    const g = 9.81;
+    const { radius, length, inclination: alpha } = this.conditions;
+    const hypotenuse = length / cos(alpha);
+    const acceleration = (3 / 4) * g * sin(alpha);
+    const path = new THREE.Vector2(cos(-alpha), sin(-alpha));
 
-    const path = new THREE.Vector2(cos(-inclination), sin(-inclination)).multiplyScalar(l);
+    let time = 0;
+    let velocity = 0;
+    let x = 0; // Distance traveled through hypotenuse
 
-    return [
-      { time: 0, position: this.initPosition, rotation: 0 },
-      { time: 3, position: this.initPosition.add(path), rotation: this.height / sin(inclination) / r },
-    ];
+    const steps: InclinedPlaneInstant[] = [];
+
+    while (x < hypotenuse) {
+      const instant: InclinedPlaneInstant = {
+        time,
+        position: path.clone().multiplyScalar(x).add(this.initPosition),
+        rotation: x / radius,
+      };
+
+      steps.push(instant);
+
+      time += timestep;
+      velocity += acceleration * timestep;
+      x += velocity * timestep;
+    }
+
+    return steps;
   }
 
   onUpdate(callback: () => void) {
