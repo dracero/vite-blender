@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { InclinedPlaneModel } from "../models/InclinedPlaneModel";
 import { WheelAnimation } from "./WheelAnimation";
 import { RulerObject } from "./RulerObject";
+import { AngleRulerObject } from "./AngleRulerObject";
 
 const ObjectsIndex = {
   wheel: "Cylinder001",
@@ -17,13 +18,15 @@ export class PlaneObject extends THREE.Object3D {
   private plane: THREE.Mesh;
   private animation: WheelAnimation;
 
+  private rulers: THREE.Group = new THREE.Group();
   private heightRuler: RulerObject;
+  private angleRuler: AngleRulerObject;
 
   constructor() {
     super();
 
-    // this.add(scene);
     this.name = "plane-object";
+    this.add(this.rulers);
 
     this.model = InclinedPlaneModel.fromDatGUI();
     this.buildWheel();
@@ -36,16 +39,7 @@ export class PlaneObject extends THREE.Object3D {
 
     if (!this.wheel) console.error(`Wheel missing: no object found with name ${ObjectsIndex.wheel}`);
 
-    this.heightRuler = new RulerObject({
-      from: new THREE.Vector3(0),
-      to: new THREE.Vector3(0, this.model.height, 0),
-      serif: 0.7,
-      margin: 3,
-      separationDir: new THREE.Vector3(-1),
-      projection: true,
-      color: 0x0,
-    });
-    this.add(this.heightRuler);
+    this.buildRulers();
 
     this.updateModel();
     this.model.onUpdate(() => this.updateModel());
@@ -83,6 +77,9 @@ export class PlaneObject extends THREE.Object3D {
 
     this.heightRuler.to.set(0, this.model.height, 0);
     this.heightRuler.rebuild();
+
+    this.angleRuler.angle = angle;
+    this.angleRuler.reset();
   }
 
   private buildWheel(): THREE.Object3D {
@@ -93,7 +90,7 @@ export class PlaneObject extends THREE.Object3D {
 
     this.wheel = new THREE.Group();
 
-    const geometry = new THREE.CylinderGeometry(r, r, 0.2, 8);
+    const geometry = new THREE.CylinderGeometry(r, r, 0.2, 16);
     geometry.rotateX(Math.PI / 2);
     const material = new THREE.MeshPhongMaterial({ color: 0xdd4400 });
     const left = new THREE.Mesh(geometry, material);
@@ -107,5 +104,26 @@ export class PlaneObject extends THREE.Object3D {
     this.wheel.userData.disposables = [geometry];
 
     return this.wheel;
+  }
+
+  private buildRulers() {
+    this.heightRuler = new RulerObject({
+      from: new THREE.Vector3(0),
+      to: new THREE.Vector3(0, this.model.height, 0),
+      serif: 0.7,
+      margin: 3,
+      separationDir: new THREE.Vector3(-1),
+      projection: true,
+      color: 0x0,
+    });
+
+    this.angleRuler = new AngleRulerObject({
+      angle: this.model.conditions.inclination,
+    });
+
+    this.angleRuler.position.setX(this.model.conditions.length);
+
+    this.rulers.add(this.heightRuler);
+    this.rulers.add(this.angleRuler);
   }
 }

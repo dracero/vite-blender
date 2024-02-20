@@ -67,7 +67,6 @@ export class RulerObject extends THREE.Group {
     this.add(this.labelMesh);
 
     this.reset(settings);
-    this.rebuild();
   }
 
   reset(settings: RulerSettings) {

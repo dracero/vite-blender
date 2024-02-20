@@ -1,10 +1,9 @@
-import React, { useRef, useState } from "react";
 import * as THREE from "three";
-import { useGLTF, OrbitControls, PerspectiveCamera, OrthographicCamera } from "@react-three/drei";
+import React, { useRef, useState } from "react";
+import { OrbitControls, PerspectiveCamera, OrthographicCamera } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { PlaneObject } from "../objects/PlaneObject";
 import { addDatListener } from "./DatGUI";
-import { RulerObject } from "../objects/RulerObject";
 
 export const PlaneCanvas = (props) => {
   const perspectiveCamRef = useRef();
@@ -32,6 +31,8 @@ export const PlaneCanvas = (props) => {
     plane.update();
   });
 
+  const orthoCamX = plane.model.conditions.length / 2;
+
   return (
     <>
       {/* Main scene */}
@@ -46,11 +47,17 @@ export const PlaneCanvas = (props) => {
       <gridHelper args={[50, 50]} position={[15, 0, 0]} />
       <primitive object={axes} />
 
-      <PerspectiveCamera ref={perspectiveCamRef} makeDefault position={[15, 15, 30]} enabled={!show2d} />
-      <OrthographicCamera ref={orthoCamRef} position={[0, 0, 15]} zoom={40} enableRotate={false} enabled={show2d} />
+      <PerspectiveCamera ref={perspectiveCamRef} makeDefault position={[30, 20, 30]} enabled={!show2d} />
+      <OrthographicCamera ref={orthoCamRef} position={[15, 0, 15]} zoom={25} enableRotate={false} enabled={show2d} />
 
       <OrbitControls ref={perspControlsRef} camera={perspectiveCamRef.current} enabled={!show2d} />
-      <OrbitControls ref={orthoControlsRef} camera={orthoCamRef.current} enableRotate={false} enabled={show2d} />
+      <OrbitControls
+        ref={orthoControlsRef}
+        camera={orthoCamRef.current}
+        target={[15, 0, 0]}
+        enableRotate={false}
+        enabled={show2d}
+      />
     </>
   );
 };
