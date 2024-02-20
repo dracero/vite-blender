@@ -13,7 +13,6 @@ class DatEvent extends Event {
 export const guiOptions = {
   togglePlay: () => {},
   speed: 1,
-  height: 10,
   phi: 0.3,
   radius: 2,
   '2D': false 
@@ -32,7 +31,6 @@ export const DatGUI = () => {
 
       gui.add(guiOptions, 'togglePlay').name('▶ ⏸').onChange(dispatcher('datgui-togglePlay'))
       gui.add(guiOptions, 'speed', 0, 2, 0.1).name("Velocidad").onChange(dispatcher('datgui-speed'))
-      gui.add(guiOptions, 'height', 2, 20).name('Altura').onChange(dispatcher('datgui-height'))
       gui.add(guiOptions, 'phi', 0.1, 1).name('φ').onChange(dispatcher('datgui-phi'))
       gui.add(guiOptions, 'radius', 0.5, 5).name('Radio').onChange(dispatcher('datgui-radius'))
       gui.add(guiOptions, '2D').onChange(dispatcher('datgui-2D'))

@@ -4,6 +4,7 @@ import { useGLTF, OrbitControls, PerspectiveCamera, OrthographicCamera } from "@
 import { useFrame, useThree } from "@react-three/fiber";
 import { PlaneObject } from "../objects/PlaneObject";
 import { addDatListener } from "./DatGUI";
+import { RulerObject } from "../objects/RulerObject";
 
 export const PlaneCanvas = (props) => {
   const perspectiveCamRef = useRef();
@@ -37,12 +38,12 @@ export const PlaneCanvas = (props) => {
       <primitive object={plane} />
 
       {/* Light */}
-      <ambientLight intensity={0.3} />
-      <spotLight position={[10, 30, 10]} angle={0.6} penumbra={1} />
+      <ambientLight intensity={0.7} />
+      <spotLight position={[50, 30, 10]} angle={0.7} penumbra={1} />
       <pointLight position={[-1, -1, -1]} />
 
       {/* Some stuff */}
-      <primitive object={new THREE.GridHelper(50, 30)} position={[0, 0, 0]} />
+      <gridHelper args={[50, 50]} position={[15, 0, 0]} />
       <primitive object={axes} />
 
       <PerspectiveCamera ref={perspectiveCamRef} makeDefault position={[15, 15, 30]} enabled={!show2d} />

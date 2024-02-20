@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { InclinedPlaneModel } from "../models/InclinedPlaneModel";
 import { WheelAnimation } from "./WheelAnimation";
+import { RulerObject } from "./RulerObject";
 
 const ObjectsIndex = {
   wheel: "Cylinder001",
@@ -15,6 +16,8 @@ export class PlaneObject extends THREE.Object3D {
   private wheel: THREE.Object3D;
   private plane: THREE.Mesh;
   private animation: WheelAnimation;
+
+  private heightRuler: RulerObject;
 
   constructor() {
     super();
@@ -33,6 +36,17 @@ export class PlaneObject extends THREE.Object3D {
 
     if (!this.wheel) console.error(`Wheel missing: no object found with name ${ObjectsIndex.wheel}`);
 
+    this.heightRuler = new RulerObject({
+      from: new THREE.Vector3(0),
+      to: new THREE.Vector3(0, this.model.height, 0),
+      serif: 0.7,
+      margin: 3,
+      separationDir: new THREE.Vector3(-1),
+      projection: true,
+      color: 0x0,
+    });
+    this.add(this.heightRuler);
+
     this.updateModel();
     this.model.onUpdate(() => this.updateModel());
 
@@ -46,14 +60,15 @@ export class PlaneObject extends THREE.Object3D {
 
   private updateModel() {
     const { tan } = Math;
-    const { height: h, inclination: phi, radius: r } = this.model.conditions;
+    const { inclination: phi } = this.model.conditions;
+    const h = this.model.height;
     const depth = PlaneObject.depth;
     const margin = new THREE.Vector2(1, tan(phi)).multiplyScalar(2);
 
     const shape = new THREE.Shape();
     shape.moveTo(-margin.x, 0);
     shape.lineTo(-margin.x, h + margin.y);
-    shape.lineTo(this.model.horizontalLength, 0);
+    shape.lineTo(this.model.conditions.length, 0);
 
     this.plane.geometry.dispose();
     this.plane.geometry = new THREE.ExtrudeGeometry(shape, { depth, curveSegments: 3, bevelEnabled: false });
@@ -65,6 +80,9 @@ export class PlaneObject extends THREE.Object3D {
 
     this.animation = new WheelAnimation(this.wheel, this.model);
     this.animation.play();
+
+    this.heightRuler.to.set(0, this.model.height, 0);
+    this.heightRuler.rebuild();
   }
 
   private buildWheel(): THREE.Object3D {

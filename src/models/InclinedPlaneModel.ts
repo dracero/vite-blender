@@ -1,8 +1,10 @@
 import * as THREE from "three";
 import { addDatListener, guiOptions } from "../components/DatGUI";
 
+const DEFAULT_LENGTH = 30;
+
 type InclinedPlaneConditions = {
-  height: number;
+  length: number;
   radius: number;
   inclination: number; // Angle
 };
@@ -21,11 +23,6 @@ export class InclinedPlaneModel {
   constructor(conditions: InclinedPlaneConditions) {
     this.conditions = JSON.parse(JSON.stringify(conditions));
 
-    addDatListener("datgui-height", (e) => {
-      this.conditions.height = e.value;
-      this.dispatchUpdate();
-    });
-
     addDatListener("datgui-phi", (e) => {
       this.conditions.inclination = e.value;
       this.dispatchUpdate();
@@ -39,7 +36,7 @@ export class InclinedPlaneModel {
 
   static fromDatGUI(): InclinedPlaneModel {
     const conditions = {
-      height: guiOptions.height,
+      length: DEFAULT_LENGTH,
       inclination: guiOptions.phi,
       radius: guiOptions.radius,
     };
@@ -47,28 +44,26 @@ export class InclinedPlaneModel {
     return new InclinedPlaneModel(conditions);
   }
 
-  get horizontalLength(): number {
-    return this.conditions.height / Math.tan(this.conditions.inclination);
+  get height(): number {
+    return Math.tan(this.conditions.inclination) * this.conditions.length;
   }
 
   get initPosition(): THREE.Vector2 {
     const { cos, sin, PI } = Math;
-    const { radius: r, height: h, inclination } = this.conditions;
+    const { radius: r, inclination: phi } = this.conditions;
 
-    const alpha = PI / 2 - inclination;
-    return new THREE.Vector2(r * cos(alpha), h + r * sin(alpha));
+    return new THREE.Vector2(r * sin(phi), this.height + r * cos(phi));
   }
 
   solve(): InclinedPlaneInstant[] {
     const { cos, sin } = Math;
-    const { horizontalLength: l } = this;
-    const { height: h, radius: r, inclination } = this.conditions;
+    const { radius: r, length: l, inclination } = this.conditions;
 
     const path = new THREE.Vector2(cos(-inclination), sin(-inclination)).multiplyScalar(l);
 
     return [
       { time: 0, position: this.initPosition, rotation: 0 },
-      { time: 3, position: this.initPosition.add(path), rotation: h / Math.sin(inclination) / r },
+      { time: 3, position: this.initPosition.add(path), rotation: this.height / sin(inclination) / r },
     ];
   }
 
