@@ -55,13 +55,16 @@ export class InclinedPlaneModel {
     return new THREE.Vector2(r * sin(angle), this.height + r * cos(angle));
   }
 
+  get acceleration(): number {
+    const g = 9.81;
+    return (3 / 4) * g * Math.sin(this.conditions.inclination);
+  }
+
   solve(): InclinedPlaneInstant[] {
     const { cos, sin } = Math;
     const timestep = 0.01;
-    const g = 9.81;
     const { radius, length, inclination: alpha } = this.conditions;
     const hypotenuse = length / cos(alpha);
-    const acceleration = (3 / 4) * g * sin(alpha);
     const path = new THREE.Vector2(cos(-alpha), sin(-alpha));
 
     let time = 0;
@@ -80,7 +83,7 @@ export class InclinedPlaneModel {
       steps.push(instant);
 
       time += timestep;
-      velocity += acceleration * timestep;
+      velocity += this.acceleration * timestep;
       x += velocity * timestep;
     }
 

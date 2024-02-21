@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
+import { Disposable } from "../types";
 
 export type RulerSettings = {
   from: THREE.Vector3;
@@ -14,8 +15,6 @@ export type RulerSettings = {
     rotation?: number;
   };
 };
-
-type Disposable = { dispose: () => void };
 
 export class RulerObject extends THREE.Group {
   from: THREE.Vector3;
@@ -72,16 +71,7 @@ export class RulerObject extends THREE.Group {
   reset(settings: RulerSettings) {
     this.validateSettings(settings);
 
-    const {
-      from,
-      to,
-      serif = 0,
-      margin = 0,
-      separationDir,
-      color = 0xffffff,
-      projection = false,
-      label: label,
-    } = settings;
+    const { from, to, serif = 0, margin = 0, separationDir, color = 0x0, projection = false, label: label } = settings;
 
     this.from = from;
     this.to = to;

@@ -1,9 +1,10 @@
 import * as THREE from "three";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { OrbitControls, PerspectiveCamera, OrthographicCamera } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { PlaneObject } from "../objects/PlaneObject";
 import { addDatListener } from "./DatGUI";
+import { VariablesGrid } from "../utils/VariablesGrid";
 
 export const PlaneCanvas = (props) => {
   const perspectiveCamRef = useRef();
@@ -31,7 +32,9 @@ export const PlaneCanvas = (props) => {
     plane.update();
   });
 
-  const orthoCamX = plane.model.conditions.length / 2;
+  useEffect(() => {
+    VariablesGrid.updateAcm(plane.model.acceleration.toFixed(2));
+  });
 
   return (
     <>

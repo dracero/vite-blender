@@ -1,12 +1,11 @@
 import * as THREE from "three";
+import { Disposable } from "../types";
 
 export type AngleRulerSettings = {
   angle: number;
   radius?: number;
   color?: THREE.ColorRepresentation;
 };
-
-type Disposable = { dispose: () => void };
 
 export class AngleRulerObject extends THREE.Group {
   angle: number;

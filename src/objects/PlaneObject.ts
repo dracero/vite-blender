@@ -4,6 +4,9 @@ import { WheelAnimation } from "./WheelAnimation";
 import { RulerObject } from "./RulerObject";
 import { AngleRulerObject } from "./AngleRulerObject";
 import { addDatListener, guiOptions } from "../components/DatGUI";
+import { vec3 } from "../utils/math";
+import { Disposable } from "../types";
+import { VariablesGrid } from "../utils/VariablesGrid";
 
 const ObjectsIndex = {
   wheel: "Cylinder001",
@@ -22,6 +25,9 @@ export class PlaneObject extends THREE.Object3D {
   private rulers: THREE.Group = new THREE.Group();
   private heightRuler: RulerObject;
   private angleRuler: AngleRulerObject;
+  private distanceRuler: RulerObject;
+
+  private disposables: Disposable[] = [];
 
   constructor() {
     super();
@@ -54,6 +60,18 @@ export class PlaneObject extends THREE.Object3D {
 
   update() {
     this.animation.update();
+
+    VariablesGrid.updateTime(this.animation.time.toFixed(2));
+
+    // const { from, to } = this.distanceRuler;
+    // this.distanceRuler.label = { text: from.distanceTo(to).toFixed(2) };
+    this.distanceRuler.to.copy(this.wheel.position);
+    this.distanceRuler.rebuild();
+  }
+
+  dispose() {
+    this.disposables.forEach((o) => o.dispose());
+    this.disposables.length = 0;
   }
 
   private updateModel() {
@@ -111,6 +129,9 @@ export class PlaneObject extends THREE.Object3D {
   }
 
   private buildRulers() {
+    const { sin, cos } = Math;
+    const { inclination: angle, radius, length } = this.model.conditions;
+
     this.heightRuler = new RulerObject({
       from: new THREE.Vector3(0),
       to: new THREE.Vector3(0, this.model.height, 0),
@@ -121,13 +142,20 @@ export class PlaneObject extends THREE.Object3D {
       color: 0x0,
     });
 
-    this.angleRuler = new AngleRulerObject({
-      angle: this.model.conditions.inclination,
+    this.angleRuler = new AngleRulerObject({ angle });
+
+    this.angleRuler.position.setX(length);
+
+    this.distanceRuler = new RulerObject({
+      from: vec3(this.model.initPosition).setZ(-PlaneObject.depth / 2),
+      to: this.wheel.position,
+      margin: radius + 1,
+      separationDir: new THREE.Vector3(sin(angle), cos(angle), 0),
+      serif: 0.7,
+      projection: true,
     });
 
-    this.angleRuler.position.setX(this.model.conditions.length);
-
-    this.rulers.add(this.heightRuler);
-    this.rulers.add(this.angleRuler);
+    this.rulers.add(this.heightRuler, this.angleRuler, this.distanceRuler);
+    this.disposables.push(this.heightRuler, this.angleRuler, this.distanceRuler);
   }
 }
