@@ -107,7 +107,6 @@ export class PlaneObject extends THREE.Object3D {
 
     this.distanceRuler.from.copy(vec3(this.model.initPosition));
     this.distanceRuler.from.setZ(-PlaneObject.depth / 2);
-    this.distanceRuler.separationDir!.set(sin(angle), cos(angle), 0);
     this.distanceRuler.rebuild();
 
     VariablesGrid.updateAcm(this.model.acceleration.toFixed(2));
@@ -138,7 +137,7 @@ export class PlaneObject extends THREE.Object3D {
   }
 
   private buildRulers() {
-    const { sin, cos, PI } = Math;
+    const { PI } = Math;
     const { inclination: angle, radius, length } = this.model.conditions;
 
     this.heightRuler = new RulerObject({
@@ -146,7 +145,6 @@ export class PlaneObject extends THREE.Object3D {
       to: new THREE.Vector3(0, this.model.height, 0),
       serif: 0.7,
       margin: 3,
-      separationDir: new THREE.Vector3(-1),
       projection: true,
       color: 0x0,
       label: { text: "", rotation: -PI / 2 },
@@ -160,7 +158,6 @@ export class PlaneObject extends THREE.Object3D {
       from: vec3(this.model.initPosition).setZ(-PlaneObject.depth / 2),
       to: this.wheel.position,
       margin: radius + 1,
-      separationDir: new THREE.Vector3(sin(angle), cos(angle), 0),
       serif: 0.7,
       projection: true,
       label: { text: "" },

@@ -8,7 +8,7 @@ export type RulerSettings = {
   to: THREE.Vector3;
   serif?: number;
   margin?: number;
-  separationDir?: THREE.Vector3; // Normalized, please
+  normal?: THREE.Vector3;
   color?: THREE.ColorRepresentation;
   projection?: boolean;
   label?: {
@@ -23,7 +23,7 @@ export class RulerObject extends THREE.Group {
   color: THREE.Color;
   serif: number;
   margin: number;
-  separationDir?: THREE.Vector3;
+  normal: THREE.Vector3;
   projection: boolean;
   label?: RulerSettings["label"];
 
@@ -73,17 +73,31 @@ export class RulerObject extends THREE.Group {
     this.reset(settings);
   }
 
+  get binormal(): THREE.Vector3 {
+    const dir = this.to.clone().sub(this.from);
+    return dir.cross(this.normal).normalize().negate();
+  }
+
   reset(settings: RulerSettings) {
     this.validateSettings(settings);
 
-    const { from, to, serif = 0, margin = 0, separationDir, color = 0x0, projection = false, label: label } = settings;
+    const {
+      from,
+      to,
+      serif = 0,
+      margin = 0,
+      normal = new THREE.Vector3(0, 0, 1),
+      color = 0x0,
+      projection = false,
+      label: label,
+    } = settings;
 
     this.from = from;
     this.to = to;
     this.color = new THREE.Color(color);
     this.serif = serif;
     this.margin = margin;
-    this.separationDir = separationDir?.clone();
+    this.normal = normal.clone().normalize();
     this.projection = projection;
     this.label = label;
 
@@ -91,7 +105,7 @@ export class RulerObject extends THREE.Group {
   }
 
   rebuild() {
-    const { from, to, serif, margin, separationDir, color, projection } = this;
+    const { from, to, serif, margin, color, projection, binormal } = this;
 
     this.dispose();
 
@@ -100,7 +114,7 @@ export class RulerObject extends THREE.Group {
     this.disposables.push(this.material);
 
     // Build object
-    const offset = separationDir?.clone().multiplyScalar(margin) || new THREE.Vector3();
+    const offset = binormal.clone().multiplyScalar(margin) || new THREE.Vector3();
     const mainPoints = [from.clone().add(offset), to.clone().add(offset)];
     const mainGeom = new THREE.BufferGeometry().setFromPoints(mainPoints);
     this.disposables.push(mainGeom);
@@ -108,7 +122,7 @@ export class RulerObject extends THREE.Group {
     this.mainLine.material = this.material;
 
     if (serif > 0) {
-      const serifOffset = separationDir!.clone().multiplyScalar(serif / 2);
+      const serifOffset = binormal.clone().multiplyScalar(serif / 2);
       const fromStart = from.clone().add(offset).add(serifOffset);
       const fromEnd = from.clone().add(offset).sub(serifOffset);
       const fromGeom = new THREE.BufferGeometry().setFromPoints([fromStart, fromEnd]);
@@ -158,7 +172,7 @@ export class RulerObject extends THREE.Group {
 
       // Set position & rotation
       this.labelMesh.position.copy(to).sub(from).multiplyScalar(0.5).add(from);
-      this.labelMesh.position.add(separationDir!.clone().multiplyScalar(margin + 0.5));
+      this.labelMesh.position.add(binormal!.clone().multiplyScalar(margin + 0.5));
       const angle = this.label.rotation || to.clone().sub(from).angleTo(new THREE.Vector3(1));
       this.labelMesh.rotation.set(0, 0, -angle);
     }
@@ -169,12 +183,5 @@ export class RulerObject extends THREE.Group {
     this.disposables.length = 0;
   }
 
-  private validateSettings(settings: RulerSettings) {
-    const { serif = 0, margin = 0, separationDir, label } = settings;
-
-    if ((serif > 0 || margin > 0) && !separationDir)
-      throw new Error("Param 'separationDir' must be specified if 'serif' or 'margin' is present");
-
-    if (label && !separationDir) throw new Error("Param 'separationDir' must be specified if 'label' is present");
-  }
+  private validateSettings(settings: RulerSettings) {}
 }
