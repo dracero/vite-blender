@@ -47,15 +47,14 @@ export class PlaneObject extends THREE.Object3D {
 
     if (!this.wheel) console.error(`Wheel missing: no object found with name ${ObjectsIndex.wheel}`);
 
-    this.buildRulers();
-
-    this.updateModel();
     this.model.onUpdate(() => this.updateModel());
-
-    this.animation = new WheelAnimation(this.wheel, this.model);
-    this.animation.play();
+    this.model.onFinishUpdate(() => this.finishUpdate());
 
     addDatListener("datgui-guides", (e) => (this.rulers.visible = e.value));
+
+    this.buildRulers();
+    this.updateModel();
+    this.finishUpdate();
   }
 
   update() {
@@ -75,11 +74,13 @@ export class PlaneObject extends THREE.Object3D {
   }
 
   private updateModel() {
-    const { tan, sin, cos } = Math;
+    const { tan } = Math;
     const { inclination: angle } = this.model.conditions;
     const h = this.model.height;
     const depth = PlaneObject.depth;
     const margin = new THREE.Vector2(1, tan(angle)).multiplyScalar(2);
+
+    this.rulers.visible = false;
 
     const shape = new THREE.Shape();
     shape.moveTo(-margin.x, 0);
@@ -92,10 +93,16 @@ export class PlaneObject extends THREE.Object3D {
 
     this.wheel.removeFromParent();
     this.wheel = this.buildWheel();
+    this.wheel.position.copy(vec3(this.model.initPosition)).setZ(-PlaneObject.depth / 2);
     this.add(this.wheel);
 
     this.animation = new WheelAnimation(this.wheel, this.model);
-    this.animation.play();
+
+    VariablesGrid.updateAcm(this.model.acceleration.toFixed(2));
+  }
+
+  private finishUpdate() {
+    const { inclination: angle } = this.model.conditions;
 
     let { from, to } = this.heightRuler;
     this.heightRuler.to.set(0, this.model.height, 0);
@@ -109,7 +116,9 @@ export class PlaneObject extends THREE.Object3D {
     this.distanceRuler.from.setZ(-PlaneObject.depth / 2);
     this.distanceRuler.rebuild();
 
-    VariablesGrid.updateAcm(this.model.acceleration.toFixed(2));
+    this.rulers.visible = guiOptions.showGuides;
+
+    this.animation.play();
   }
 
   private buildWheel(): THREE.Object3D {

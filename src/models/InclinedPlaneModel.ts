@@ -19,6 +19,7 @@ export class InclinedPlaneModel {
   conditions: InclinedPlaneConditions;
 
   private static readonly updateEvent = "model-update";
+  private static readonly finishUpdate = "finish-update";
 
   constructor(conditions: InclinedPlaneConditions) {
     this.conditions = JSON.parse(JSON.stringify(conditions));
@@ -31,6 +32,10 @@ export class InclinedPlaneModel {
     addDatListener("datgui-radius", (e) => {
       this.conditions.radius = e.value;
       this.dispatchUpdate();
+    });
+
+    addDatListener("datgui-released", () => {
+      this.dispatchFinishUpdate();
     });
   }
 
@@ -94,7 +99,15 @@ export class InclinedPlaneModel {
     addEventListener(InclinedPlaneModel.updateEvent, callback);
   }
 
+  onFinishUpdate(callback: () => void) {
+    addEventListener(InclinedPlaneModel.finishUpdate, callback);
+  }
+
   private dispatchUpdate() {
     dispatchEvent(new Event(InclinedPlaneModel.updateEvent));
+  }
+
+  private dispatchFinishUpdate() {
+    dispatchEvent(new Event(InclinedPlaneModel.finishUpdate));
   }
 }

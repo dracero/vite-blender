@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-type DatEventType = 'datgui-togglePlay' | 'datgui-speed' | 'datgui-2D' | 'datgui-angle' | 'datgui-radius' | 'datgui-guides'
+type DatEventType = 'datgui-released' | 'datgui-togglePlay' | 'datgui-speed' | 'datgui-2D' | 'datgui-angle' | 'datgui-radius' | 'datgui-guides'
 
 class DatEvent extends Event {
   value: any;
@@ -23,6 +23,7 @@ export function addDatListener(type: DatEventType, callback: (e: DatEvent) => vo
   addEventListener(type, callback as any)
 }
 
+
 export const DatGUI = () => {
   useEffect(() => {
     import('dat.gui').then(dat => {
@@ -32,8 +33,8 @@ export const DatGUI = () => {
 
       gui.add(guiOptions, 'togglePlay').name('▶ ⏸').onChange(dispatcher('datgui-togglePlay'))
       gui.add(guiOptions, 'speed', 0, 2, 0.1).name("Velocidad").onChange(dispatcher('datgui-speed'))
-      gui.add(guiOptions, 'angle', 0.1, 1).name('α').onChange(dispatcher('datgui-angle'))
-      gui.add(guiOptions, 'radius', 0.5, 5).name('Radio').onChange(dispatcher('datgui-radius'))
+      gui.add(guiOptions, 'angle', 0.1, 1).name('α').onChange(dispatcher('datgui-angle')).onFinishChange(dispatcher('datgui-released'))
+      gui.add(guiOptions, 'radius', 0.5, 5).name('Radio').onChange(dispatcher('datgui-radius')).onFinishChange(dispatcher('datgui-released'))
       gui.add(guiOptions, 'showGuides').name('Guías').onChange(dispatcher('datgui-guides'))
       gui.add(guiOptions, '2D').onChange(dispatcher('datgui-2D'))
     })
