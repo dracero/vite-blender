@@ -75,7 +75,7 @@ export class PlaneObject extends THREE.Object3D {
   }
 
   private updateModel() {
-    const { tan } = Math;
+    const { tan, sin, cos } = Math;
     const { inclination: angle } = this.model.conditions;
     const h = this.model.height;
     const depth = PlaneObject.depth;
@@ -102,6 +102,13 @@ export class PlaneObject extends THREE.Object3D {
 
     this.angleRuler.angle = angle;
     this.angleRuler.reset();
+
+    this.distanceRuler.from.copy(vec3(this.model.initPosition));
+    this.distanceRuler.from.setZ(-PlaneObject.depth / 2);
+    this.distanceRuler.separationDir!.set(sin(angle), cos(angle), 0);
+    this.distanceRuler.rebuild();
+
+    VariablesGrid.updateAcm(this.model.acceleration.toFixed(2));
   }
 
   private buildWheel(): THREE.Object3D {
