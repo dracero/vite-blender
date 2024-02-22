@@ -15,7 +15,7 @@ export const guiOptions = {
   speed: 1,
   angle: 0.3,
   radius: 2,
-  showGuides: true,
+  showGuides: false,
   '2D': false 
 }
 
