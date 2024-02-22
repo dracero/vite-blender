@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { Disposable } from "../types";
+import { AssetsManager } from "../utils/AssetsManager";
 
 export type RulerSettings = {
   from: THREE.Vector3;
@@ -37,6 +38,10 @@ export class RulerObject extends THREE.Group {
   private disposables: Disposable[] = [];
 
   private static dashSize = 0.2;
+
+  static {
+    AssetsManager.load("labelFont");
+  }
 
   constructor(settings: RulerSettings) {
     super();
@@ -142,11 +147,20 @@ export class RulerObject extends THREE.Group {
     }
 
     if (this.label) {
-      console.warn(">>> MISSING FONT");
-      const labelGeom = new TextGeometry("sad");
+      const labelGeom = new TextGeometry(this.label.text, {
+        font: AssetsManager.loaded.labelFont,
+        size: 0.6,
+        height: 0,
+      });
       this.disposables.push(labelGeom);
       this.labelMesh.geometry = labelGeom;
       this.labelMesh.material = this.material;
+
+      // Set position & rotation
+      this.labelMesh.position.copy(to).sub(from).multiplyScalar(0.5).add(from);
+      this.labelMesh.position.add(separationDir!.clone().multiplyScalar(margin + 0.5));
+      const angle = this.label.rotation || to.clone().sub(from).angleTo(new THREE.Vector3(1));
+      this.labelMesh.rotation.set(0, 0, -angle);
     }
   }
 
@@ -156,9 +170,11 @@ export class RulerObject extends THREE.Group {
   }
 
   private validateSettings(settings: RulerSettings) {
-    const { serif = 0, margin = 0, separationDir } = settings;
+    const { serif = 0, margin = 0, separationDir, label } = settings;
 
     if ((serif > 0 || margin > 0) && !separationDir)
       throw new Error("Param 'separationDir' must be specified if 'serif' or 'margin' is present");
+
+    if (label && !separationDir) throw new Error("Param 'separationDir' must be specified if 'label' is present");
   }
 }
