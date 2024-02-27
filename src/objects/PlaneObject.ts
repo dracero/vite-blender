@@ -7,6 +7,7 @@ import { addDatListener, guiOptions } from "../components/DatGUI";
 import { vec3 } from "../utils/math";
 import { Disposable } from "../types";
 import { VariablesGrid } from "../utils/VariablesGrid";
+import { WheelObject } from "./WheelObject";
 
 const ObjectsIndex = {
   wheel: "Cylinder001",
@@ -18,7 +19,7 @@ export class PlaneObject extends THREE.Object3D {
   static readonly depth = 10;
   static readonly wheelWidth = 7;
 
-  private wheel: THREE.Object3D;
+  private wheel: WheelObject;
   private plane: THREE.Mesh;
   private animation: WheelAnimation;
 
@@ -37,7 +38,9 @@ export class PlaneObject extends THREE.Object3D {
     this.add(this.rulers);
 
     this.model = InclinedPlaneModel.fromDatGUI();
-    this.buildWheel();
+
+    this.wheel = new WheelObject({ radius: this.model.conditions.radius, length: PlaneObject.wheelWidth });
+    this.disposables.push(this.wheel);
     this.add(this.wheel);
 
     const planeGeometry = new THREE.BufferGeometry();
@@ -75,7 +78,7 @@ export class PlaneObject extends THREE.Object3D {
 
   private updateModel() {
     const { tan } = Math;
-    const { inclination: angle } = this.model.conditions;
+    const { inclination: angle, radius: wheelRadius } = this.model.conditions;
     const h = this.model.height;
     const depth = PlaneObject.depth;
     const margin = new THREE.Vector2(1, tan(angle)).multiplyScalar(2);
@@ -91,10 +94,11 @@ export class PlaneObject extends THREE.Object3D {
     this.plane.geometry = new THREE.ExtrudeGeometry(shape, { depth, curveSegments: 3, bevelEnabled: false });
     this.plane.geometry.translate(0, 0, -depth);
 
-    this.wheel.removeFromParent();
-    this.wheel = this.buildWheel();
+    if (this.wheel.radius != wheelRadius) {
+      this.wheel.radius = wheelRadius;
+      this.wheel.reset();
+    }
     this.wheel.position.copy(vec3(this.model.initPosition)).setZ(-PlaneObject.depth / 2);
-    this.add(this.wheel);
 
     this.animation = new WheelAnimation(this.wheel, this.model);
 
@@ -119,30 +123,6 @@ export class PlaneObject extends THREE.Object3D {
     this.rulers.visible = guiOptions.showGuides;
 
     this.animation.play();
-  }
-
-  private buildWheel(): THREE.Object3D {
-    const { radius: r } = this.model.conditions;
-
-    const disposables = this.wheel?.userData.disposables;
-    if (disposables) disposables.forEach((disposable) => disposable.dispose());
-
-    this.wheel = new THREE.Group();
-
-    const geometry = new THREE.CylinderGeometry(r, r, 0.2, 16);
-    geometry.rotateX(Math.PI / 2);
-    const material = new THREE.MeshPhongMaterial({ color: 0xdd4400 });
-    const left = new THREE.Mesh(geometry, material);
-    left.translateZ(-PlaneObject.wheelWidth / 2);
-    const right = new THREE.Mesh(geometry, material);
-    right.translateZ(PlaneObject.wheelWidth / 2);
-
-    this.wheel.add(left);
-    this.wheel.add(right);
-
-    this.wheel.userData.disposables = [geometry];
-
-    return this.wheel;
   }
 
   private buildRulers() {
