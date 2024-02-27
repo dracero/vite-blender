@@ -46,7 +46,7 @@ export class WheelObject extends THREE.Group implements Disposable {
     rightWheel.translateZ(-length / 2);
     this.add(rightWheel);
 
-    const barGeom = new THREE.CylinderGeometry(0.1, 0.1, length, segments / 2);
+    const barGeom = new THREE.CylinderGeometry(0.1, 0.1, length - 0.01, segments / 2);
     barGeom.rotateX(Math.PI / 2);
     this.disposables.push(barGeom);
 
@@ -63,10 +63,12 @@ export class WheelObject extends THREE.Group implements Disposable {
   }
 
   private newWheelGeometry(): THREE.BufferGeometry {
-    const { segments } = WheelObject;
+    const { segments: curveSegments } = WheelObject;
     const { radius } = this;
-    const geom = new THREE.CylinderGeometry(radius, radius, 0.2, segments);
-    geom.rotateX(Math.PI / 2);
+
+    const circle = new THREE.EllipseCurve(0, 0, radius, radius);
+    const shape = new THREE.Shape(circle.getPoints(curveSegments));
+    const geom = new THREE.ExtrudeGeometry(shape, { depth: 0.2, curveSegments, bevelEnabled: false });
     return geom;
   }
 
@@ -87,21 +89,21 @@ export class WheelObject extends THREE.Group implements Disposable {
       `,
 
       fragmentShader: `
-      precision mediump float;
-      #define PI 3.141592
-      varying vec2 vUv;
-      uniform float uDivisions;
-      uniform vec3 uColor1, uColor2;
-      
-      void main() {
-        vec2 uv = (vUv - 0.5) * 2.0;
-        float angle = atan(uv.y, uv.x) + PI;
+        precision mediump float;
+        #define PI 3.141592
+        varying vec2 vUv;
+        uniform float uDivisions;
+        uniform vec3 uColor1, uColor2;
+        
+        void main() {
+          vec2 uv = vUv;
+          float angle = atan(uv.y, uv.x) + PI;
 
-        int n = int(angle / PI / 2.0 * float(uDivisions));
-        vec3 color = (n % 2 == 0) ? uColor1 : uColor2;
+          int n = int(angle / PI / 2.0 * float(uDivisions));
+          vec3 color = (n % 2 == 0) ? uColor1 : uColor2;
 
-        gl_FragColor = vec4(color, 1.0);
-      }
+          gl_FragColor = vec4(color, 1.0);
+        }
       `,
     });
   }

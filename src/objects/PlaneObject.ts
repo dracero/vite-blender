@@ -99,6 +99,7 @@ export class PlaneObject extends THREE.Object3D {
       this.wheel.reset();
     }
     this.wheel.position.copy(vec3(this.model.initPosition)).setZ(-PlaneObject.depth / 2);
+    this.wheel.rotation.set(0, 0, 0);
 
     this.animation = new WheelAnimation(this.wheel, this.model);
 

@@ -18,8 +18,6 @@ export const PlaneCanvas = (props) => {
   const plane = (window.plane = new PlaneObject());
 
   const axes = new THREE.AxesHelper(50);
-  axes.material.depthTest = false;
-  axes.renderOrder = 1;
 
   addDatListener("datgui-2D", (ev) => {
     const ortho = ev.value;
