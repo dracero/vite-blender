@@ -5,6 +5,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { PlaneObject } from "../objects/PlaneObject";
 import { addDatListener } from "./DatGUI";
 import { VariablesGrid } from "../utils/VariablesGrid";
+import { XRControllersManager } from "../xr/XRControllersManager";
 
 export const PlaneCanvas = (props) => {
   const perspectiveCamRef = useRef();
@@ -28,6 +29,7 @@ export const PlaneCanvas = (props) => {
 
   useFrame(() => {
     plane.update();
+    XRControllersManager.update();
   });
 
   useEffect(() => {

@@ -31,6 +31,8 @@ export class WheelAnimation {
     addDatListener("datgui-speed", (e) => (this.speed = e.value));
 
     addDatListener("datgui-togglePlay", () => this.togglePlay());
+
+    addEventListener("togglePlay", () => this.togglePlay());
   }
 
   get time(): number {

@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Clock } from "../utils/Clock";
+import { XRControllersManager } from "../xr/XRControllersManager";
+import { XRManager } from "../xr/XRManager";
 
 export const ThreeCanvas = (props) => {
   Clock.start();
@@ -14,9 +16,12 @@ export const ThreeCanvas = (props) => {
 
   function ThreeHook() {
     const w = window;
-    const { scene } = useThree();
+    const { scene, gl: renderer } = useThree();
+    XRManager.init(renderer);
+
     w.scene = scene;
     w.THREE = THREE;
+    w.renderer = renderer;
     return null;
   }
 
