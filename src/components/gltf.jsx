@@ -6,26 +6,24 @@ import { useAnimations, useGLTF } from "@react-three/drei";
 const GltfModel = ({ modelPath, scale = 1, position = [-1, 3, -1], action }) => {
   const group = useRef();
   const gltf = useLoader(GLTFLoader, modelPath);
-  const {  animations } = useGLTF("/eje.glb");
+  const { animations } = useGLTF("/eje.glb");
   const { actions } = useAnimations(animations, group);
+
   useEffect(() => {
     console.log(actions);
-    if (action){
-      actions.eje.paused=false
+    if (action) {
+      actions.eje.paused = false;
       actions.eje.play();
-     } else  {
-      actions.eje.paused=true;
-     }
-  })
-   // Subscribe this component to the render-loop, rotate the mesh every frame
+    } else {
+      actions.eje.paused = true;
+    }
+  });
+
+  // Subscribe this component to the render-loop, rotate the mesh every frame
   //useFrame((state, delta) => (ref.current.rotation.y += 0.003));
   return (
     <>
-     <primitive
-        ref={group}
-        object={gltf.scene}
-        position={position}
-      />
+      <primitive ref={group} object={gltf.scene} position={position} />
     </>
   );
 };
