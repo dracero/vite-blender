@@ -5,9 +5,12 @@ import { Clock } from "../utils/Clock";
 import { PlaneObject } from "./PlaneObject";
 
 export class WheelAnimation {
+  readonly duration: number;
+
   private mixer: THREE.AnimationMixer;
   private action: THREE.AnimationAction;
   private speed: number = guiOptions.speed;
+  private slider: HTMLInputElement;
 
   constructor(obj: THREE.Object3D, model: InclinedPlaneModel) {
     const positions: number[] = [];
@@ -22,11 +25,16 @@ export class WheelAnimation {
       times.push(time);
     }
 
+    this.duration = times[times.length - 1];
+
     const positionTrack = new THREE.VectorKeyframeTrack(".position", times, positions);
     const rotationTrack = new THREE.VectorKeyframeTrack(".rotation[z]", times, rotations);
     const clip = new THREE.AnimationClip("wheel-animation", -1, [positionTrack, rotationTrack]);
     this.mixer = new THREE.AnimationMixer(obj);
     this.action = this.mixer.clipAction(clip);
+
+    this.slider = document.getElementById("time-slider") as HTMLInputElement;
+    this.slider.addEventListener("input", this.onSliderUpdate.bind(this));
 
     addDatListener("datgui-speed", (e) => (this.speed = e.value));
 
@@ -49,10 +57,16 @@ export class WheelAnimation {
 
   update() {
     this.mixer.update(Clock.delta * this.speed);
-    // this.slider.value = `${this.time / SphereAnimation.duration}`;
+    this.slider.value = `${this.time / this.duration}`;
   }
 
   togglePlay(value = this.action.paused) {
     this.action.paused = !value;
+  }
+
+  private onSliderUpdate(ev: Event) {
+    const time = parseFloat(this.slider.value) * this.duration;
+    this.action.time = time;
+    this.togglePlay(false);
   }
 }
