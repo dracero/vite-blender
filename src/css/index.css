@@ -48,6 +48,19 @@ body {
   box-shadow: 0 3px 6px -3px #33333355;
 }
 
+.slider-container {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#time-slider {
+  width: 95%;
+  margin-bottom: 1rem;
+}
+
 #VRButton {
   position: absolute !important;
   bottom: 3rem !important;
